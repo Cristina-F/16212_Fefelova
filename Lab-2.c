@@ -4,39 +4,48 @@
 
 #define LEFT -1
 #define RIGHT 1
+#define MAX_NUMBER 15
 
-int error (int n) {
+int read_scanf (int n) {
 	int count = 0;
 	int num = 0;
 	while (1) {
 		num = scanf("%d", &n);
-		if ((1 != num) || (n < 0)) {
-			while (getchar() != '\n'){	
-			}
+		if ((1 != num) || (0 >= n)) {
+			while (getchar() != '\n');
 		}
 		else {
-			while (getchar() != '\n'){
+			while (getchar() != '\n') {
 				count++;
 			}
 			if (0 == count) {
 				break;
 			}
 		}
-		printf("Enter the number\n");
+		printf("Enter a positive integer number <= 15\n");
 		count = 0;
 	}
 	return n;
 }
-int factorial(int n) { //Считаем число перестановок
-	if (1 == n) {
-		return 1;
+
+int factorial (int n) { //Считаем число перестановок
+	int fact = 1;
+	for (int i = 2; i <= n; i++){
+		fact = fact *i;
 	}
-	return n*factorial(n - 1);
+	return fact;
 }
-int search_mobile(int *set, int *change, int n) { //Поиск наиболее подвижного элемента
+
+void fill(int *set, int *change, int n) {
+	for (int i = 0; i < n; i++) {
+		set[i] = i + 1;
+		change[i] = LEFT;
+	}
+}
+int search_mobile (int *set, int *change, int n) { //Поиск наиболее подвижного элемента
 	int mobile = -1;
 	int step = 0;
-	for (int i = 0; i < n; i++){
+	for (int i = 0; i < n; i++) {
 		if (LEFT == change[i]) {
 			step = LEFT;
 		}
@@ -52,6 +61,7 @@ int search_mobile(int *set, int *change, int n) { //Поиск наиболее 
 	}
 	return mobile;
 }
+
 int transform_change (int *set, int *change, int n, int mobile) { //Меняем направление стрелок в зависимости от наиболее подвижного элемента
 	for (int i = 0; i < n; i++) {
 		if (set[i] > set[mobile]) {
@@ -65,6 +75,7 @@ int transform_change (int *set, int *change, int n, int mobile) { //Меняем
 	}
 	return *change;
 }
+
 void swap (int *set, int *change, int mobile) {// Выполняем перестановоку
 	int bufS = set[mobile];
 	int bufCh = change[mobile];
@@ -81,7 +92,8 @@ void swap (int *set, int *change, int mobile) {// Выполняем перес�
 		change[mobile + 1] = bufCh;
 	}
 }
-void print_permutation (int **permutation, int n, int comb){ //Печатаем все перестановки
+
+void print_permutation (int **permutation, int n, int comb) { //Печатаем все перестановки
 	for (int i = 0; i < comb; i++) {
 		for (int j = 0; j < n; j++) {
 			printf("%d ", permutation[i][j]);
@@ -89,6 +101,16 @@ void print_permutation (int **permutation, int n, int comb){ //Печатаем 
 		printf("\n");
 	}
 }
+
+void free_memory(int *set, int *change, int **permutation, int comb) {
+	free(set);
+	free(change);
+	for (int i = 0; i < comb; i++) {
+		free(permutation[i]);
+	}
+	free(permutation);
+}
+
 int main (int argc, char *argv[]) {
 	int n = 0;
 	int size = 0;
@@ -97,17 +119,21 @@ int main (int argc, char *argv[]) {
 		for (size = 0; n > 0; size++) {
 			n = n / 10;
 		}
-		if (size == strlen(argv[1])) {
+		if (strlen(argv[1]) == size) {
 			n = atoi(argv[1]);
 		}
 		else {
-			printf("Enter the number\n");
-			n = error(n);
+			printf("Enter a positive integer number <= 15\n");
+			n = read_scanf(n);
 		}
 	}
 	else {
-		printf("Enter the number\n");
-		n = error(n);
+		printf("Enter a positive integer number <= 15\n");
+		n = read_scanf(n);
+	}
+	if (MAX_NUMBER < n) {
+		printf("Enter a positive integer number <= 15\n");
+		n = read_scanf(n);
 	}
 	int comb = factorial(n);
 	int *set = (int*)calloc(n, sizeof(int));
@@ -118,10 +144,7 @@ int main (int argc, char *argv[]) {
 	for (int i = 0; i < comb; i++) {
 		permutation[i] = (int*)calloc(n, sizeof(int));
 	}
-	for (int i = 0; i < n; i++) {
-		set[i] = i + 1;
-		change[i] = LEFT;
-	}
+	fill(set, change, n);
 	while (count < comb) {
 		for (int i = 0; i < n; i++) { //Записываем текущюю перестановоку
 			permutation[count][i] = set[i];
@@ -136,8 +159,7 @@ int main (int argc, char *argv[]) {
 		count++;
 	}
 	print_permutation(permutation, n, comb);
-	free(set);
-	free(change);
-	free(permutation);
+	free_memory(set, change, permutation, comb);
 	return 0;
 }
+
