@@ -4,6 +4,7 @@
 
 #define LEFT 0
 #define RIGHT 1
+#define DONT_NULL -1
 
 struct list {
 	int data;
@@ -15,6 +16,7 @@ struct tree {
 	struct tree* left;
 	struct tree* right;
 };
+
 // Создаем новый узел в списке
 struct list* creatList ( int x ) {
 	struct list* new = ( struct list* )calloc( 1, sizeof( struct list ) );
@@ -22,41 +24,33 @@ struct list* creatList ( int x ) {
 	new -> next = NULL;
 	return new;
 }
-// Считываем число из файла
-int read_number ( FILE* file, char* read) { 
-	int number = 0;
-	int sgn = 1;
-	while ( ( *read = fgetc( file ) ) != ' ' ) {
-		if ( EOF == *read) {
-			break;
-		}
-		if ( '\n' == *read ) {
-			continue;
-		}
-		if ( '-' == *read ) {
-			sgn = -1;
-			continue;
-		}
-		number = number * 10 + atoi( read );
-	} 
-	number *= sgn;
-	return number;
-}
-// Записываем числа в список
+
+// Записываем числа файла в список
 struct list* write_number ( FILE *file ) {
 	char read = 0;
-	struct list* head = creatList( read_number( file, &read) );
-	struct list* counter = head;
 	int number = 0;
-	while ( read != EOF ) {
-		number = read_number( file, &read );
+	char check = fscanf( file, "%d", &number );
+	if ( 1 != check ) {
+		return NULL;
+	}
+	struct list* head = creatList( number );
+	struct list* counter = head;
+	while ( !feof( file ) ) {
+		check = fscanf( file, "%d", &number );
+		if( EOF == check ) {
+			return head;
+		}
+		if ( 1 != check ) {
+			return NULL;
+		}
 		counter -> next = creatList( number );
 		counter = counter -> next;
 	}
 	counter = head;
 	return head;
 }
-// Считаем длинну списка
+
+// Считаем длину списка
 int length ( struct list* head ) {
 	int count = 0;
 	struct list* counter = head;
@@ -66,6 +60,7 @@ int length ( struct list* head ) {
 	}
 	return count;
 }
+
 // Делим список на два подсписка
 void divide ( struct list* input, struct list** left, struct list** right ) {
 	int size = length( input );
@@ -84,6 +79,7 @@ void divide ( struct list* input, struct list** left, struct list** right ) {
 		actual -> next = NULL;
 	}
 }
+
 // Объединяем два подсписка
 struct list* merge_sort ( struct list* left, struct list* right ) {
 	struct list* result = NULL;
@@ -117,21 +113,7 @@ void merge_list ( struct list** start ) {
 	merge_list( &right );
 	*start = merge_sort( left, right );
 }
-// Удаляем из списка одиннаковые элементы
-struct list* delete (struct list* head){
-	struct list* tmp = head;
-	while(NULL != tmp-> next){
-		if( tmp -> data == tmp -> next -> data){
-			struct list* follow = tmp -> next -> next;
-			free(tmp -> next);
-			tmp -> next= follow;
-		}
-		else {
-			tmp =tmp -> next;
-		}
-	}
-	return head;
-}
+
 // Создаем сбалансированное дерево
 struct tree* createTree( struct list* head, int size, int side) {
 	if ( 0 == size ) {
@@ -152,33 +134,49 @@ struct tree* createTree( struct list* head, int size, int side) {
 	root -> right = createTree( counter -> next, size-mid-1, RIGHT );
 	return root;
 }
-// Печать дерева на экран
-void print_tree( struct tree* root, int count ) {
-	if ( count > 0) {
-		printf( "\n|" );
-		for( int i = 0; i < count; i++ ) {
-			printf( "  " );
-		}
-		printf( "|\n|  " );	
-		for( int i = 0; i < count; i++ ) {
-			if( i + 1 < count ) {
-				printf( "  " );
-			} 
-			else {
-				printf( " -" );
-			}	
-		}
+
+void tree_bias ( int count ) {
+	printf( "\n|" );
+	for( int i = 0; i < count; i++ ) {
+		printf( "  " );
 	}
-	if ( NULL != root ) {
-		printf( "(%d)", root -> key );
-		if ( 0 == count ) {
-			printf( "--" );
-		}
-		count++;
-		print_tree( root -> right, count );
-		print_tree( root -> left, count );
+	printf( "  |\n| " ); 
+	for( int i = 0; i < count; i++ ) {
+		if( i + 1 < count ) {
+			printf( "  " );
+		} 
+		else {
+			printf( "    -" );
+		} 
 	}
 }
+
+// Печать дерева на экран
+void print_tree( struct tree* root, int height, int status ) {
+	if ( NULL != root ) {
+		if ( RIGHT == status ) {
+			tree_bias( height );
+		}
+		status = DONT_NULL;
+		if ( height > 0 ) {
+			tree_bias( height );
+		}
+		printf( "(%d)", root -> key );
+		if ( ( NULL != root -> right ) && ( NULL == root -> left ) ) {
+			status = LEFT;
+		}
+		else if ( ( NULL == root -> right ) && ( NULL != root -> left ) ) {
+			status = RIGHT;
+		}
+		height++;
+		print_tree( root -> right, height, status );
+		if ( LEFT == status ) {
+			tree_bias( height );
+		}
+		print_tree( root -> left, height, status );
+	}
+}
+
 // Освобождаем память списка
 void free_list ( struct list* head ) {
 	for( int i = 0; i < length( head ); i++ ) {
@@ -213,10 +211,13 @@ int main ( int argc, char* argv[ ] ) {
 		return -1;
 	}
 	struct list *head = write_number( in_file );
+	if ( NULL == head ){
+		printf("The file contains invalid data.\n");
+		return -1;
+	}
 	merge_list( &head );
-	delete(head);
 	struct tree * root = createTree( head, length( head ), RIGHT );
-	print_tree( root, 0 );
+	print_tree( root, 0, DONT_NULL );
 	printf("\n");
 	free_list( head );
 	free_tree( root );
