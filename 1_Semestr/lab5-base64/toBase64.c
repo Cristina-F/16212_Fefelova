@@ -5,20 +5,9 @@
 #define ALPHA "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 #define INPUT_SIZE 3
 #define OUTPUT_SIZE 4
-#define DEL "."
 #define SUF ".base64"
 
-void delet_str ( char* Source_str, const char* Del_str ) {
-	int len = 1;
-	char* start_del = strstr( Source_str, Del_str  );
-	while ( Source_str[len] != Del_str[0] ) {
-		len++;
-	}
-	strcpy( start_del, start_del + ( strlen( Source_str ) - len ) );
-}
-
 void creat_file ( char* name_file ) {
-	delet_str( name_file, DEL );
 	name_file = strcat( name_file, SUF );
 	FILE* file = fopen( name_file, "w" );
 	if ( NULL == file ) {
@@ -35,25 +24,27 @@ void encode( char* orig , char* base64 ) {
 }
 
 void encode_base64 ( FILE* in_file, FILE* out_file ) {
-		char orig[INPUT_SIZE] = { };
-		char base64[OUTPUT_SIZE] = { };
-		int read  = fread( orig, 1, INPUT_SIZE, in_file );
-		while ( read > 0 ) {
-			encode( orig, base64 );
-			for (int i = 0; i < OUTPUT_SIZE; i++ ) {
-				base64[i] = ALPHA[(int)base64[i]];
-			}
-			if ( read < INPUT_SIZE ) {
-				base64[INPUT_SIZE] = '=';
-				if ( 1 == read ) {
-					base64[2] = '=';
-				}
-			}
-			fwrite( base64, 1, OUTPUT_SIZE, out_file );
-			memset( orig, 0, INPUT_SIZE );
-			memset( base64, 0, OUTPUT_SIZE );
-			read = fread( orig, 1, INPUT_SIZE, in_file );
+	char* orig = ( char* )calloc( INPUT_SIZE, sizeof( char ) );
+	char* base64 = ( char* )calloc( OUTPUT_SIZE, sizeof( char ) );
+	int read  = fread( orig, 1, INPUT_SIZE, in_file );
+	while ( read > 0 ) {
+		encode( orig, base64 );
+		for (int i = 0; i < OUTPUT_SIZE; i++ ) {
+			base64[i] = ALPHA[( int )base64[i]];
 		}
+		if ( read < INPUT_SIZE ) {
+			base64[INPUT_SIZE] = '=';
+			if ( 1 == read ) {
+				base64[2] = '=';
+			}
+		}
+		fwrite( base64, 1, OUTPUT_SIZE, out_file );
+		memset( orig, 0, INPUT_SIZE );
+		memset( base64, 0, OUTPUT_SIZE );
+		read = fread( orig, 1, INPUT_SIZE, in_file );
+	}
+	free( orig );
+	free( base64 );
 }
 
 int main ( int argc, char* argv[ ] ) {
@@ -76,6 +67,8 @@ int main ( int argc, char* argv[ ] ) {
 	out_file = fopen( out_name, "w" );// Открываем файл для записи
 	if ( NULL == out_file ) { // Завершаем программу, если файл невозможно открыть
 		printf( "Can not open %s.\n", out_name );
+		free( out_name );
+		fclose( in_file );
 		return -1;
 	}
 	encode_base64( in_file, out_file ); // Кодируем в base64
