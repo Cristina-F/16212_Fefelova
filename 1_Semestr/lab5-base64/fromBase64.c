@@ -5,20 +5,9 @@
 #define ALPHA "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 #define INPUT_SIZE 4
 #define OUTPUT_SIZE 3
-#define DEL "."
 #define SUF ".orig"
 
-void delet_str ( char* Source_str, const char* Del_str ) {
-	int len = 1;
-	char* start_del = strstr( Source_str, Del_str  );
-	while ( Source_str[len] != Del_str[0] ) {
-		len++;
-	}
-	strcpy( start_del, start_del + ( strlen( Source_str ) - len ) );
-}
-
 void creat_file ( char* name_file ) {
-	delet_str( name_file, DEL );
 	name_file = strcat( name_file, SUF );
 	FILE* file = fopen( name_file, "w" );
 	if ( NULL == file ) {
@@ -31,7 +20,7 @@ int check_file ( FILE* file ) {
 	char read = fgetc( file ); 
 	int length = 0;
 	int n = 0;
-	while( EOF != read) { 
+	while( EOF != read) {
 		if ( '\n'  != read ) {
 			length++;
 		} 
@@ -64,15 +53,15 @@ int chek ( char read ) {
 }
 
 void decode ( char* orig , char* base64 ) {
-	 orig[0] = ( base64[0] << 2 ) | ( ( base64[1] & 0x30 ) >> 4 );
-     orig[1] = ( ( base64[1] & 0x0F ) << 4 ) | ( ( base64[2] & 0x3C ) >> 2 );
-     orig[2] = ( ( base64[2] & 0x03 ) << 6 ) | base64[3];
+	orig[0] = ( base64[0] << 2 ) | ( ( base64[1] & 0x30 ) >> 4 );
+	orig[1] = ( ( base64[1] & 0x0F ) << 4 ) | ( ( base64[2] & 0x3C ) >> 2 );
+	orig[2] = ( ( base64[2] & 0x03 ) << 6 ) | base64[3];
 }
 
 int decode_base64 ( FILE* in_file, FILE* out_file ) {
-	char orig[OUTPUT_SIZE] = { };
-	char base64[INPUT_SIZE] = { };
-	int read = fread( base64, 1, INPUT_SIZE, in_file);
+	char* orig = ( char* )calloc( OUTPUT_SIZE, sizeof( char ) );
+	char* base64 = ( char* )calloc( INPUT_SIZE, sizeof( char ) );
+	int read = fread( base64, 1, INPUT_SIZE, in_file );
 	int equally = 0;
 	while ( INPUT_SIZE == read ) {
 		for ( int i = 0; i < INPUT_SIZE; i++ ) {
@@ -97,6 +86,8 @@ int decode_base64 ( FILE* in_file, FILE* out_file ) {
 		memset( orig, 0, OUTPUT_SIZE );
 		read = fread( base64, 1, INPUT_SIZE, in_file );
 	}
+	free( orig );
+	free( base64 );
 	return 0;
 }
 
@@ -104,7 +95,7 @@ int main ( int argc, char* argv[ ] ) {
 	FILE* in_file = NULL;
 	FILE* out_file = NULL;
 	if ( 2 == argc ) {
-		in_file = fopen( argv[1], "r" );
+		in_file = fopen( argv[1], "rb" );
 		if ( NULL == in_file ) {
 			printf( "Can not open %s.\n", argv[1] );
 			return -1;
@@ -120,6 +111,7 @@ int main ( int argc, char* argv[ ] ) {
 	out_file = fopen( out_name, "w" );
 	if ( NULL == out_file ) {
 		printf( "Can not open %s.\n", out_name );
+ 		fclose( in_file ); 
 		return -1;
 	}
 	int chek = check_file( in_file );
@@ -133,14 +125,20 @@ int main ( int argc, char* argv[ ] ) {
 		else if ( 3 == chek ) {
 			printf( "Wrong number of characters =\n" );
 		}
+		free( out_name );
+		fclose( out_file );
+ 		fclose( in_file ); 
 		return -1;
 	}	
 	if ( -1 == decode_base64( in_file, out_file ) ) {
 		printf( "Not all symbols correspond alphabetically base64\n" );
+		fclose( out_file );
+		fclose( in_file );
+		free( out_name );
 		return -1;
 	}
 	fclose( out_file );
- 	fclose( in_file ); 
+	fclose( in_file ); 
 	free( out_name );
 	return 0;
 }
