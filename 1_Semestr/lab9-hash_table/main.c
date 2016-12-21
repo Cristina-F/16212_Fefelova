@@ -3,8 +3,8 @@
 #include <string.h>
 #include "header.h"
 
-#define SIZE 10 // Размер таблицы
-#define MAX_LENGTH 30 // Максимальная длинна имени
+#define SIZE 3
+#define MAX_LENGTH 30 // Максимальная длина имени
 
 int main( int argc, char* argv[] ) {
 	FILE* in_file = NULL;
@@ -19,7 +19,7 @@ int main( int argc, char* argv[] ) {
 		printf( "Error: incorrect input data.\n" );
 		return -1;
 	}		
-	struct hash_table* hash_table = create_table( SIZE );
+	struct hash_table* hash_table = create_table( SIZE, 0 );
 	hash_table = write_in_table( in_file, hash_table );
 	fclose ( in_file );
 	print_table( hash_table );
