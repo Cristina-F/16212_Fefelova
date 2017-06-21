@@ -47,4 +47,8 @@ int main( int argc, char* argv[] ) {
 	algo( hash_table, start_vertex, finish_vertex, count_vertex );
 	free_table( hash_table );
 	return 0;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 5423c5eeb018f09d45ddfbc932730673bfeded96

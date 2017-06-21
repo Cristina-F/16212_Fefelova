@@ -45,4 +45,8 @@ void free_queue( struct queue* q, void( func )( void* ) ) {
 		poll_queue( q );
 	}
 	free( q );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 5423c5eeb018f09d45ddfbc932730673bfeded96

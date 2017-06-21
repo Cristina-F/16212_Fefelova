@@ -27,4 +27,8 @@ void decrease_key( struct bin_heap* heap,  struct node* elem, int value );
 void bin_heap_delete( struct bin_heap* heap, struct node* elem );
 void free_bin_heap ( struct bin_heap* heap );
 
+<<<<<<< HEAD
 #endif
+=======
+#endif
+>>>>>>> 5423c5eeb018f09d45ddfbc932730673bfeded96

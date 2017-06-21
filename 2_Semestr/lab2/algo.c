@@ -148,4 +148,8 @@ void dijkstra_algorithm( struct hash_table* hash_table, struct table_cell* start
 	//print_table3( hash_table );
 	print_path( start, finish);
 	free_bin_heap( q );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 5423c5eeb018f09d45ddfbc932730673bfeded96

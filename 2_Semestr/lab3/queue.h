@@ -16,4 +16,8 @@ int add_queue ( struct queue* q, struct table_cell* elem );
 struct table_cell* poll_queue( struct queue* q );
 void free_queue( struct queue* q, void( func )( void* ) );
 
+<<<<<<< HEAD
 #endif
+=======
+#endif
+>>>>>>> 5423c5eeb018f09d45ddfbc932730673bfeded96

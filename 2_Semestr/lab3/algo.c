@@ -176,4 +176,8 @@ void algo(struct hash_table* hash_table, struct table_cell* start, struct table_
 	}
 	print_table_flow( hash_table );
 	printf( "max_flow = %d\n", max_flow );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 5423c5eeb018f09d45ddfbc932730673bfeded96
