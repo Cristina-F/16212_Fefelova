@@ -1,8 +1,4 @@
 #if !defined(QUEUE)
-
-#include <stdio.h>
-#include <stdlib.h>
-
 #define QUEUE
 
 struct list_q {

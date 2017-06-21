@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h> 
+#include <limits.h> 
 
-#include "hash_table.h"
-#include "graph.h"
+#include "ht.h"
+#include "gr.h"
+#include "algo.h"
 
 #define SIZE 3// Начальный размер хеш-таблицы
 
@@ -24,7 +25,6 @@ int check_input_data( int argc, char* name_file ) {
 }
 
 
-
 int main( int argc, char* argv[] ) {
 	FILE* in_file = NULL;
 	if( 0 == check_input_data( argc, argv[1] ) ) {
@@ -34,10 +34,17 @@ int main( int argc, char* argv[] ) {
 		return -1;
 	}
 	struct hash_table* hash_table = create_table( SIZE );
-	hash_table = add_node( hash_table, in_file );	
+	int count_vertex = 0;
+	hash_table = add_node( hash_table, in_file, &count_vertex );	
 	fclose ( in_file );
-	bfs( hash_table );
-	print_table(hash_table);
+	struct table_cell* start_vertex = get_vertex( hash_table );
+	struct table_cell* finish_vertex = get_vertex( hash_table );
+	if ( !start_vertex || !finish_vertex ) {
+		printf("Don't found vertex.\n");
+		free_table( hash_table );
+		return -1;
+	}
+	algo( hash_table, start_vertex, finish_vertex, count_vertex );
 	free_table( hash_table );
 	return 0;
 }

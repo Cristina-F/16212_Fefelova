@@ -1,11 +1,7 @@
-#if !defined(GRAPH)
+#if !defined(HASH_TABLE)
+#define HASH_TABLE
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#define GRAPH
-
 
 //Хеш-таблица
 struct hash_table {
@@ -29,11 +25,11 @@ struct list {
 	struct list* next;
 };
 
-
+int check_id ( struct hash_table* hash_table, char* id );
 struct hash_table* create_table ( int size_table );
-int check_input_data( int argc, char* name_file );
-struct hash_table* add_node ( struct hash_table* hash_table, FILE* in_file  );
+struct table_cell* table_search ( struct hash_table* hash_table, char* id );
+struct hash_table* write_in_table(  struct hash_table* hash_table, char* index, int count_elem );
 void  print_table ( struct hash_table* table );
-int bfs( struct hash_table* hash_table );
 void free_table ( struct hash_table* hash_table );
+
 #endif

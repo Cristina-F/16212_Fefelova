@@ -13,7 +13,7 @@ struct queue* create_queue( ) {
 	return new_queue;
 }
 
-int add_queue ( struct queue* q, char* index ) {
+int add_queue ( struct queue* q, struct table_cell* elem) {
 	struct list_q* tmp = ( struct list_q* )calloc( 1, sizeof( struct list_q ) );
 	if ( !tmp ) {
 		return -1;
@@ -27,12 +27,22 @@ int add_queue ( struct queue* q, char* index ) {
 		q -> tail -> next = tmp;
 		q -> tail = tmp;
 	}
-	q -> tail -> x = index;
+	q -> tail -> x = elem;
 	return 0;
 }
  
-void poll_queue( struct queue* q ) {
+struct table_cell* poll_queue( struct queue* q ) {
 	struct list_q* buff = q -> head;
 	q -> head = q -> head -> next;
+	struct table_cell* tmp = buff -> x;
 	free( buff );
+	return tmp;
+}
+
+void free_queue( struct queue* q, void( func )( void* ) ) {
+	while ( q -> head ) {
+		func( q -> head -> x );
+		poll_queue( q );
+	}
+	free( q );
 }
