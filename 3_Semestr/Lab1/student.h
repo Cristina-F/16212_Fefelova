@@ -19,6 +19,8 @@ struct value {
         weight = 0;
     }
 
+    ~value() {}
+
     friend bool operator!=( const value& a, const value& b ) {
         if ( a.age != b.age || a.weight != b.weight ) {
             return true;
