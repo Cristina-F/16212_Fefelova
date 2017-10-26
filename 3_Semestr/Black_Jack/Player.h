@@ -12,22 +12,21 @@
 
 class Player {
 public:
-    Player( ) {
+    Player( );
 
-    }
-    ~Player( ) {
+    ~Player( );
 
-    }
-    void step ( ){ }//Ход в зависимости от стратегии
-    void get_card( Deck & deck ) {
-        hand.get_card( deck );
-    }
-    void print( ) {
-        hand.print();
-    }
+    virtual bool step ( Card & card );
+
+    virtual void get_card( Deck & deck );
+
+    virtual void print( );
+
+    virtual Card & first_card ( );
+
+    virtual int score();
 private:
-Hand hand;
+    Hand hand;
 };
-
 
 #endif //BLACK_JACK_PLAYER_H

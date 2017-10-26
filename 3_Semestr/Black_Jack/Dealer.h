@@ -1,7 +1,3 @@
-//
-// Created by cristina on 19.10.17.
-//
-
 #ifndef BLACK_JACK_DEALER_H
 #define BLACK_JACK_DEALER_H
 
@@ -11,52 +7,25 @@
 
 class Dealer {
 public:
-    Dealer() {
+    Dealer();
 
-    }
+    Dealer( unsigned int size_deck );
 
-    Dealer( unsigned int size_deck ) {
-        Deck new_deck( size_deck);
-        this -> deck = new_deck;
-    }
+    ~Dealer();
 
-   void shuffle( ) {
-        deck.shuffle();
-    }
+    void shuffle( );
 
-    ~Dealer() {
-    }
-    void get_card ( ){
-        hand.get_card( deck );
-    }
-    void give_out_carts( std:: vector <Player*>  players) {
-        get_card();
-        give_cards_to_players( players );
-        //give_cards_to_players( players );
-        /*for( Player* i: players ) {
-            i -> print( );
-        }*/
-    }
+    void give_out_cards( std:: vector <Player*>  players);
 
-    void give_cards_to_players( std:: vector <Player*>   players ) {
-        int k = 0;
-        for( Player*  i: players ) {
-            std::cout<<k<<std::endl;
-            i -> get_card( deck );
-            k++;
-        }
-        return ;
-    }
+    void give_cards_to_players( std:: vector <Player*>   players );
 
-    void print( std:: vector <Player> & players ) {
-        hand.print();
-        for( Player i: players ) {
-            i.print();
-        }
-    }
+    void give_card_player( Player*  player );
+
+    void print( std:: vector <Player*>  players );
+
+    void winner( Player * first, Player * second );
 private:
     Deck deck;
-    Hand hand;
 };
 
 

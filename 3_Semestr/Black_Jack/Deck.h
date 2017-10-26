@@ -1,7 +1,3 @@
-//
-// Created by cristina on 18.10.17.
-//
-
 #ifndef BLACK_JACK_DECK_H
 #define BLACK_JACK_DECK_H
 
@@ -12,69 +8,22 @@
 
 class Deck {
 public:
-    Deck ( unsigned int n ): size(52 * n) {
-        deck =  new Card[size];
-        int step = 4 * n;
-        unsigned int value = 0;
-        for ( unsigned int i = 0; i < size; i = i + step ) {
-                for (int j = 0; j < step ; j++) {
-                    Card tmp( suit[j/n], data[value], value);
-                    deck[i + j] = tmp;
-                }
-            value++;
-        }
-    }
+    Deck ( unsigned int n );
 
-    Deck ( ): size( 10 ) {
-        deck =  new Card[size];
-        for ( unsigned int i = 0; i < size; i++ ) {
-            Card tmp( i + 1 );
-            deck[i] = tmp;
-        }
-    }
+    Deck ( );
 
-    ~Deck(){
-        delete [] deck;
-    }
+    ~Deck();
 
-    void shuffle( ){
-        top = 0;
-        for ( int i = 0; i < size; i++) {
-            int idx = rand() % ( i + 1 );
-            if ( idx != i ) {
-                std::swap( deck[i], deck[idx] );
-            }
-        }
-    }
+    void shuffle( );
 
-    Card& get_card ( ){
-        if ( 10 == size ) {
-            return deck[rand() % size];
-        }
-        std::cout<<"????"<<std::endl;
-       deck[top].print();
-        return deck[top++];
-    };
+    Card* get_card ( );
 
-    void print() {
-        for ( int i = 0; i < size; i++ ) {
-            deck[i].print();
-        }
-    };
+    void print();
 
-    Deck& operator= ( Deck & obj ) {
-        if ( this != &obj ) {
-            delete [] deck;
-            this -> top = obj.top;
-            this -> size = obj.size;
-            this -> deck = new Card [this -> size];
-            std::copy(obj.deck, (obj.deck + obj.size ), this -> deck);
-        }
-        return *this;
-    }
+    Deck& operator= ( Deck & obj );
 
 private:
-    Card *deck = nullptr;
+    Card * deck = nullptr;
     int top = 0;
     int size = 0;
     const std::string  data[13] = { std::string("TWO"), std::string("THREE"),  std::string("FOUR"), std::string("FIVE"),
