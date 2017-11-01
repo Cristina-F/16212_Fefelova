@@ -1,7 +1,3 @@
-//
-// Created by cristina on 06.10.17.
-//
-
 #ifndef LAB1_STUDENT_H
 #define LAB1_STUDENT_H
 
@@ -33,7 +29,6 @@ struct value {
         }
         return true;
     }
-
 };
 
 #endif //LAB1_STUDENT_H

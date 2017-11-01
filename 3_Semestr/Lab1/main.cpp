@@ -5,11 +5,19 @@
 #define N 10
 #define M 6
 
+TEST ( Flat_map_test, ctor ) {
+    Flat_map <std::string, struct value> fm(5);
+    ASSERT_EQ( fm.size_(), 5 );
+    ASSERT_EQ( fm.capacity_(), 0 );
+
+    Flat_map <std::string, struct value> fm2;
+    ASSERT_EQ( fm2.size_(), 10 );
+    ASSERT_EQ( fm2.capacity_(), 0 );
+}
+
+
 TEST( Flat_map_test, insert ) {
     Flat_map <std::string, struct value> fm(1);
-
-    ASSERT_EQ( fm.size_(), 1 );
-    ASSERT_EQ( fm.capacity_(), 0 );
 
     ASSERT_TRUE( fm.insert( std::string("A"), value( 10, 20 ) ) );
     ASSERT_EQ( fm.capacity_(), 1 );
@@ -18,10 +26,27 @@ TEST( Flat_map_test, insert ) {
 
     EXPECT_EQ( fm.size_(), fm.capacity_() );
     ASSERT_TRUE( fm.insert( std::string("C"), value( 20, 30 ) ) );
-    EXPECT_EQ( fm.size_(), 2 );
     ASSERT_EQ( fm.capacity_(), 2 );
+    ASSERT_TRUE( fm.contains(std::string("C") ) );
+    ASSERT_EQ( fm[std::string("C")],  value( 20, 30 )  );
 
     ASSERT_TRUE( fm.insert( std::string("B"), value( 30, 20 ) ) );
+    ASSERT_EQ( fm.capacity_(), 3 );
+    ASSERT_TRUE( fm.contains(std::string("B") ) );
+    ASSERT_EQ( fm[std::string("B")],  value( 30, 20 )  );
+}
+
+TEST ( Flat_map_test, copy_ctor ) {
+    Flat_map <std::string, struct value> fm1(N);
+    for ( int i = 0;  i < N; i++ ) {
+        fm1.insert( std:: to_string( i ) , value( i, N * i ) );
+    }
+    Flat_map <std::string, struct value> fm2(fm1);
+    ASSERT_EQ( fm1.size_(), fm2.size_() );
+    ASSERT_EQ( fm1.capacity_(), fm2.capacity_() );
+    for ( int i = 0;  i < N; i++ ) {
+        ASSERT_EQ(fm1[std:: to_string( i ) ], fm2[std:: to_string( i ) ] );
+    }
 }
 
 TEST( Flat_map_test, erase ) {
@@ -30,15 +55,18 @@ TEST( Flat_map_test, erase ) {
     for ( int i = 0;  i < N; i++ ) {
         fm.insert( std:: to_string( i ) , value( i, N * i ) );
     }
-
     for( int i = 0; i < N; i++ ) {
         ASSERT_EQ( fm.capacity_(), N - i  );
-        EXPECT_TRUE(fm.erase( std:: to_string(i) ) );
-        EXPECT_FALSE(fm.contains(std:: to_string(i) ) );
-        //std::cout<<"HH"<<std::endl;
+        ASSERT_TRUE(fm.erase( std:: to_string(i) ) );
     }
     ASSERT_EQ(fm.capacity_(), 0);
+
+    Flat_map <std::string, struct value> f(N);
+    ASSERT_FALSE(f.erase( std:: string("A") ) );
+
+
 }
+
 
 TEST( Flat_map_test, empty ) {
     Flat_map <std::string, struct value> fm(1);
@@ -79,6 +107,7 @@ TEST( Flat_map_test, swap ) {
     }
 }
 
+
 TEST( Flat_map_test, size_ ) {
     Flat_map <std::string, struct value> fm(N);
     ASSERT_EQ( fm.size_(), N );
@@ -108,10 +137,10 @@ TEST( Flat_map_test, at ) {
 }
 
 TEST( Flat_map_test, square_brackets ) {
-    Flat_map <std::string, struct value> fm(1);
+    Flat_map <std::string, struct value> fm;
     fm.insert( std:: string("A") , value( 10, 15 ) ) ;
     ASSERT_EQ( fm[std:: string("A")], value( 10, 15 )  );
-    ASSERT_EQ(fm[std:: string("B")], value() );
+    ASSERT_EQ( fm[std:: string("B")], value( ) );
 }
 
 TEST( Flat_map_test, assign ) {
@@ -127,7 +156,7 @@ TEST( Flat_map_test, assign ) {
     ASSERT_EQ( a.size_(), M );
     ASSERT_EQ( a.capacity_(), M - 3 );
     for ( int i = 0;  i < M - 3; i++ ) {
-        ASSERT_EQ(a[std::to_string( i * 10 )], b[std::to_string( i * 10 )]);
+       ASSERT_EQ(a[std::to_string( i * 10 )], b[std::to_string( i * 10 )]);
     }
 }
 
@@ -146,6 +175,21 @@ TEST( Flat_map_test, equally ) {
     for ( int i = 0;  i < N - 3; i++ ) {
         ASSERT_EQ(a[std::to_string( i  )], b[std::to_string( i )]);
     }
+
+    Flat_map <std::string, struct value> x(N);
+    Flat_map <std::string, struct value> y(N);
+    for ( int i = 0;  i < N - 3; i++ ) {
+        x.insert( std:: to_string( i ) , value( i, N ) );
+    }
+    for ( int i = 0;  i < N - 3; i++ ) {
+        y.insert( std:: to_string( i  ) , value( i , N * i ) );
+    }
+    ASSERT_FALSE(x == y );
+
+    Flat_map <std::string, struct value> s(N + 1);
+    Flat_map <std::string, struct value> t(N);
+    ASSERT_FALSE(s == t);
+
 }
 
 TEST( Flat_map_test, not_equally ) {
@@ -159,17 +203,21 @@ TEST( Flat_map_test, not_equally ) {
     }
     ASSERT_TRUE(a != b );
     ASSERT_FALSE( a == b );
+
+    Flat_map <std::string, struct value> x(N);
+    Flat_map <std::string, struct value> y(N);
+    for ( int i = 0;  i < N - 3; i++ ) {
+        x.insert( std:: to_string( i ) , value( i, N * i ) );
+    }
+    for ( int i = 0;  i < N - 3; i++ ) {
+        y.insert( std:: to_string( i  ) , value( i , N * i ) );
+    }
+    ASSERT_FALSE(x != y );
+    ASSERT_TRUE(x == y);
 }
+
 
 int main( int argc, char** argv ) {
     ::testing::InitGoogleTest(&argc, argv);
-   /* Flat_map <std::string, struct value> a(5);
-    a.insert( std::string("A"), value( 20, 30 ) );
-    a.insert( std::string("Cab"), value( 20, 30 ) );
-    a.insert( std::string("D"), value( 20, 30 ) );
-    a.insert( std::string("Cagb"), value( 20, 30 ) );
-    a.insert( std::string("Bg"), value( 20, 30 ) );
-    a.insert( std::string("Cfffagb"), value( 20, 30 ) );
-    a.print();*/
     return RUN_ALL_TESTS();
 }
