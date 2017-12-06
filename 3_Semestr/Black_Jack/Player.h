@@ -8,25 +8,33 @@
 #include <vector>
 
 #include "Deck.h"
-#include "Hand.h"
 
 class Player {
 public:
     Player( );
 
-    ~Player( );
+    Player( std:: vector < Card* > hand );
 
-    virtual bool step ( Card & card );
+    virtual ~Player( );
 
-    virtual void get_card( Deck & deck );
+    virtual bool step ( Card & card ) = 0;
 
-    virtual void print( );
+    void add( Deck & deck );
 
-    virtual Card & first_card ( );
+    void print( );
 
-    virtual int score();
-private:
-    Hand hand;
+    Card & getFirstCard ( );
+
+    const std::string getName();
+
+    std::vector <Card*> getHand( );
+
+    void printHand();
+
+    void clear ();
+protected:
+    std:: string name_;
+    std:: vector <Card*> hand_;
 };
 
 #endif //BLACK_JACK_PLAYER_H

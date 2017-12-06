@@ -31,7 +31,7 @@ public:
 
     bool empty() const;
 
-   // void print( );
+   void print( );
 
     void swap( Flat_map& obj );
 
@@ -52,10 +52,7 @@ public:
     }
 
     friend bool operator!=(const Flat_map <Tkey, Tdata> & a, const Flat_map<Tkey,  Tdata>& b) {
-        if ( a == b ) {
-            return false;
-        }
-        return true;
+        return !(a == b);
     }
 
 
@@ -63,14 +60,15 @@ private:
     std::pair <Tkey, Tdata> *arr = nullptr;
     size_t size = 0;
     size_t capacity = 0;
+
     size_t bin_search( const Tkey ) const;
+
     void increase_the_size();
 };
 
 template <typename TKey, typename Tdata>
 Flat_map <TKey, Tdata>:: Flat_map( size_t initial_size ): size( initial_size ) {
     arr = new std::pair<TKey, Tdata> [initial_size];
-    std::cout<<" size_map = "<< size<< std::endl;
 }
 
 template <typename TKey, typename Tdata>
@@ -104,7 +102,7 @@ size_t Flat_map<TKey, Tdata>:: bin_search( const TKey key ) const {
                 low = middle + 1;
             }
         }
-    return -1;
+    return size_t(-1);
 }
 
 template <typename TKey, typename Tdata>
@@ -126,7 +124,7 @@ bool Flat_map <TKey, Tdata>:: insert( const TKey& key, const Tdata& value) {
     }
     std::pair <TKey, Tdata> data( key,value );
     if ( 0 == capacity || key > arr[capacity - 1].first  ) {
-        arr[capacity++] = data;
+        arr[capacity++]= data;
     }
     else {
         size_t index = 0;
@@ -134,8 +132,8 @@ bool Flat_map <TKey, Tdata>:: insert( const TKey& key, const Tdata& value) {
             index = bin_search( key );
         }
         if( key != arr[index].first ) {
-            for (size_t i = capacity - 1; i >= index; i--) {
-                arr[i + 1] = arr[i];
+            for ( size_t i = capacity; i > index; i-- ){
+                arr[i] = arr[i - 1];
             }
             capacity++;
         }
@@ -146,12 +144,9 @@ bool Flat_map <TKey, Tdata>:: insert( const TKey& key, const Tdata& value) {
 
 template <typename TKey, typename Tdata>
 bool Flat_map<TKey, Tdata>:: erase( const TKey& key ) {
-    int index = bin_search( key );
+    size_t index = bin_search( key );
     if ( -1 != index && key == arr[index].first ) {
-        /// ?? ? ? ?copy
-        for( int i = index; i < capacity - 1; i++ ) {
-            arr[i] = arr[i+1];
-        }
+        std::copy(arr + index + 1, arr + capacity, arr + index);
         capacity--;
         return true;
     }
@@ -160,10 +155,7 @@ bool Flat_map<TKey, Tdata>:: erase( const TKey& key ) {
 
 template <typename TKey, typename Tdata>
 void Flat_map<TKey, Tdata>:: clear() {
-    for( int i = 0; i < capacity; i++ ) {
-        std::pair <TKey, Tdata> data;
-        arr[i] = data;
-    }
+    std::fill(arr, (arr + capacity), std::pair <TKey, Tdata>() );
     capacity = 0;
 }
 
@@ -172,13 +164,13 @@ bool Flat_map<TKey, Tdata>:: empty() const {
     return 0 == capacity;
 }
 
-/*template <typename TKey, typename Tdata>
+template <typename TKey, typename Tdata>
 void Flat_map<TKey, Tdata>:: print( ) {
     std::cout<<"capacity = "<<capacity<<" size = "<<size<<std::endl;
     for( int i = 0; i < capacity; i++) {
-        std::cout<<"i = "<<i<<" key = "<<arr[i].first<<" age = "<<arr[i].second.age<<" weight = "<<arr[i].second.weight<<std::endl;
+        std::cout<<"i = "<<i<<" key = "<<arr[i].first<<std::endl;
     }
-}*/
+}
 
 template <typename TKey, typename Tdata>
 void Flat_map<TKey, Tdata>:: swap( Flat_map& obj) {
@@ -227,7 +219,7 @@ const Tdata& Flat_map<TKey, Tdata>:: at( const TKey& key) const {
 template <typename TKey, typename Tdata>
 Tdata& Flat_map<TKey, Tdata>:: operator[]( const TKey& key ) {
     size_t index = bin_search( key );
-    if ( !(key == arr[index].first) ) {
+    if ( -1 == index || !(key == arr[index].first) ) {
         Tdata data;
         insert( key, data );
         if ( -1 == index ){

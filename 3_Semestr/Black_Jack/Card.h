@@ -3,27 +3,29 @@
 
 #include <iostream>
 
+const unsigned int MAX = 21;
+
 class Card {
 public:
-    Card( std:: string suit_, std:: string value_, unsigned int weight_);
+    Card( const std:: string suit, const std:: string value, unsigned int weight);
 
-    Card (unsigned int weight_);
+    Card (unsigned int weight);
 
     Card();
 
     ~Card();
 
-    bool ace();
+    bool isAce() const;
 
-    void print( );
+    void print( ) const;
 
-    int weight_();
+    int getWeight() const;
 
-    void сhange_weight_ace( );
+    bool сhangeWeightAce( );
 private:
-    std:: string suit;
-    std:: string value;
-    unsigned int weight = 0;
+    std:: string suit_;
+    std:: string value_;
+    unsigned int weight_ = 0;
 };
 
 #endif //BLACK_JACK_CARD_H

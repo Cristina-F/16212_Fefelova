@@ -1,28 +1,48 @@
 #include "Player.h"
+#include "HandEvaluator.h"
 
 Player:: Player( ) {}
 
 Player:: ~Player( ) {}
 
-bool Player:: step ( Card & card ){
-    if ( hand.score() < 15 ) {
-        return true;
-    }
-    return false;
-}
+Player::Player( std:: vector <Card*>  hand ): hand_( hand ) {}
 
-void Player:: get_card( Deck & deck ) {
-    hand.get_card( deck );
+void Player:: add( Deck & deck ) {
+    HandEvaluator evaluator;
+    hand_.push_back( deck.give() );
+    if ( evaluator.countScore(hand_) > MAX ) {
+       evaluator.checkAce(hand_);
+    }
+    evaluator.countScore( hand_ );
 }
 
 void Player:: print( ) {
-    hand.print();
+    std::cout<<std::endl;
+    std::cout<<name_<<std::endl;
+    printHand();
 }
 
-Card & Player:: first_card ( ) {
-    return hand.first_card();
+void Player:: printHand() {
+    std::cout << "_______________" << std::endl;
+    for (Card *i: hand_) {
+        i->print();
+    }
+    HandEvaluator evaluator;
+    std::cout<<"score = "<<evaluator.countScore(hand_)<<std::endl;
+    std::cout << "_______________" << std::endl;
 }
 
-int Player:: score() {
-    return hand.score();
+Card & Player:: getFirstCard ( ) {
+    return  *( hand_.front( ) );
+}
+
+const std::string Player:: getName() {
+    return name_;
+}
+
+std:: vector <Card*>  Player:: getHand( ) {
+    return hand_;
+}
+void  Player:: clear (){
+    hand_.clear();
 }

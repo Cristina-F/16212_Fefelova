@@ -7,20 +7,11 @@ class Louis : public Player {
 public:
     Louis();
 
-    ~Louis();
+    ~Louis() override ;
 
     bool step( Card & card ) override;
 
-    void get_card( Deck & deck ) override;
-
-    void print( ) override;
-
-    Card & first_card ( ) override;
-
-    int score() override ;
-
 private:
-    Hand hand;
 };
 
 #endif //BLACK_JACK_LOUIS_H

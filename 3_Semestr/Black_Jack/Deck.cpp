@@ -1,60 +1,66 @@
 #include "Deck.h"
 
-Deck:: Deck ( unsigned int n ): size(52 * n) {
-    deck =  new Card[size];
-    int step = 4 * n;
+Deck:: Deck ( unsigned int n ) {
+    size_ = STANDART_SIZE_DECK * n;
+    deck_ =  new Card[size_];
+    int step = STEP * n;
     unsigned int value = 0;
-    for ( unsigned int i = 0; i < size; i = i + step ) {
+    for ( unsigned int i = 0; i < size_; i = i + step ) {
         for (int j = 0; j < step ; j++) {
-            Card tmp( suit[j/n], data[value], value);
-            deck[i + j] = tmp;
+            Card tmp( SUIT[j/n], DATA[value], value);
+            deck_[i + j] = tmp;
         }
         value++;
     }
 }
 
-Deck:: Deck ( ): size( 10 ) {
-    deck =  new Card[size];
-    for ( unsigned int i = 0; i < size; i++ ) {
+Deck:: Deck ( ) {
+    size_ = DEFAULT_SIZE;
+    deck_ =  new Card[size_];
+    for ( unsigned int i = 0; i < size_; i++ ) {
         Card tmp( i + 1 );
-        deck[i] = tmp;
+        deck_[i] = tmp;
     }
 }
 
 Deck:: ~Deck() {
-    delete [] deck;
+    delete [] deck_;
 }
 
 void Deck:: shuffle( ) {
-    top = 0;
-    for ( int i = 0; i < size; i++) {
+    top_ = 0;
+    for ( int i = 0; i < size_; i++) {
         int idx = rand() % ( i + 1 );
         if ( idx != i ) {
-            std::swap( deck[i], deck[idx] );
+            std::swap( deck_[i], deck_[idx] );
         }
     }
 }
 
-Card* Deck:: get_card ( ){
-    if ( 10 == size ) {
-        return &deck[rand() % size];
+Card* Deck:: give ( ){
+    if ( DEFAULT_SIZE == size_ ) {
+        return & deck_[rand() % size_];
     }
-    return &deck[top++];
+    return & deck_[top_++];
 };
 
 void Deck:: print() {
-    for ( int i = 0; i < size; i++ ) {
-        deck[i].print();
+    for ( int i = 0; i < size_; i++ ) {
+        deck_[i].print();
     }
 };
 
-Deck& Deck:: operator= ( Deck & obj ) {
+Deck & Deck:: operator= ( const Deck & obj ) {
     if ( this != &obj ) {
-        delete [] deck;
-        this -> top = obj.top;
-        this -> size = obj.size;
-        this -> deck = new Card [this -> size];
-        std::copy(obj.deck, (obj.deck + obj.size ), this -> deck);
+        delete [] deck_;
+        this -> top_ = obj.top_;
+        this -> size_ = obj.size_;
+        this -> deck_ = new Card [this -> size_];
+        std::copy(obj.deck_, (obj.deck_ + obj.size_ ), this -> deck_);
     }
     return *this;
+}
+
+void Deck:: printLastCard (  ) const{
+    deck_[top_ -1].print();
 }

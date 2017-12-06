@@ -1,53 +1,44 @@
 #include "Louis.h"
+
+#include "../HandEvaluator.h"
 #include "../Factory.h"
 
-Louis:: Louis(){ }
+Player * crLouis () {
+    return new Louis;
+}
+
+namespace {
+    bool b = Factory<Player,Player*(*)(), std::string>::getInstanse()->regist3r("Louis", crLouis);
+}
+
+Louis:: Louis(){
+    name_ = "Louis";
+}
 
 Louis:: ~Louis(){ }
 
 bool Louis:: step( Card & card ) {
-    int score = hand.score();
-    int opponent_score = card.weight_();
+    HandEvaluator evaluator;
+    int score = evaluator.countScore(hand_);
+    int opponentScore = card.getWeight();
     if ( score < 12 ) {
         return true;
     }
     else if ( 12 == score ) {
-        if ( opponent_score < 4 ) {
+        if ( opponentScore < 4 ) {
             return true;
         }
     }
     else if ( 16  == score ) {
-        if ( 10 != opponent_score ) {
+        if ( 10 != opponentScore ) {
             return true;
         }
     }
     else if ( score > 12 && score < 16 ) {
-        if ( opponent_score > 6 ) {
+        if ( opponentScore > 6 ) {
             return true;
         }
     }
     return false;
 
 }
-
-void Louis:: get_card( Deck & deck ) {
-    hand.get_card( deck );
-}
-
-void Louis:: print( ) {
-    hand.print();
-}
-
-Card & Louis:: first_card ( ) {
-    return hand.first_card();
-}
-
-int Louis:: score() {
-    return hand.score();
-}
-
-Player * cr_Louis () {
-    return new Louis;
-}
-
-bool l = Factory::get_instance() -> register_player("if_16_stop", cr_Louis );

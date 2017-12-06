@@ -1,41 +1,40 @@
 #include "Card.h"
 
-Card:: Card( std:: string suit_, std:: string value_, unsigned int weight_): suit(suit_), value( value_ ) {
-    if ( weight_ < 9 ) {
-        weight = weight_ + 2;
+Card:: Card( const std:: string suit, const std:: string value, unsigned int weight): suit_(suit), value_( value ) {
+    if ( weight < 9 ) {
+        weight_ = weight + 2;
     }
-    else if ( 12 == weight_ ) {
-        weight = 11;
+    else if ( 12 == weight ) {
+        weight_ = 11;
     }
     else {
-        weight = 10;
+        weight_ = 10;
     }
 
 }
 
-Card:: Card ( unsigned int weight_ ): weight(weight_) { }
+Card:: Card ( unsigned int weight ): weight_(weight) { }
 
 Card:: Card(){ }
 
 Card:: ~Card(){ }
 
-bool Card:: ace() {
-    if ( "ACE" == value  ) { //??????
+bool Card:: isAce() const{
+    return ( "ACE" == value_ );
+}
+
+void Card:: print( ) const{
+    std::cout<<suit_<<"  "<<value_<<"  "<<weight_<<std::endl;
+}
+
+int Card:: getWeight() const {
+    return weight_;
+}
+
+bool Card:: сhangeWeightAce( ){
+    if( this -> isAce() && weight_ != 1 ){
+        this -> weight_ = 1;
         return true;
     }
     return false;
-}
-
-void Card:: print( ) {
-    std::cout<<suit<<"  "<<value<<"  "<<weight<<std::endl;
-}
-
-int Card:: weight_() {
-    return weight;
-}
-
-void Card:: сhange_weight_ace( ){
-    if( this -> ace() ){
-        this -> weight = 1;
-    }
 }

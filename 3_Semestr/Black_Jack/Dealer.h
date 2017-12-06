@@ -9,23 +9,29 @@ class Dealer {
 public:
     Dealer();
 
-    Dealer( unsigned int size_deck );
+    Dealer( unsigned int sizeDeck );
+
+    Dealer( const Dealer & obj );
 
     ~Dealer();
 
     void shuffle( );
 
-    void give_out_cards( std:: vector <Player*>  players);
+    void addCardsPlayers( Player * first, Player * second);
 
-    void give_cards_to_players( std:: vector <Player*>   players );
+    void addCardPlayer( Player * player);
 
-    void give_card_player( Player*  player );
+    Player * getWinner( Player * first, Player * second );
 
-    void print( std:: vector <Player*>  players );
+    void print( std:: vector <Player*>  players ) const;
 
-    void winner( Player * first, Player * second );
+    void print( Player * player ) const;
+
+    void  printLastCard(  ) const;// для режима с детализацией
+
+    void printWinner(Player * player) const;
 private:
-    Deck deck;
+    Deck deck_;
 };
 
 

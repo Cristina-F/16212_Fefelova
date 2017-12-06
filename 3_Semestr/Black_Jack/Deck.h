@@ -16,21 +16,26 @@ public:
 
     void shuffle( );
 
-    Card* get_card ( );
+    Card * give ( );
 
     void print();
 
-    Deck& operator= ( Deck & obj );
+    Deck & operator= ( const Deck & obj );
+
+     void printLastCard (  ) const;
 
 private:
-    Card * deck = nullptr;
-    int top = 0;
-    int size = 0;
-    const std::string  data[13] = { std::string("TWO"), std::string("THREE"),  std::string("FOUR"), std::string("FIVE"),
+    Card * deck_ = nullptr;
+    unsigned int top_ = 0;
+    unsigned int size_ = 0;
+    const unsigned  int DEFAULT_SIZE = 10;
+    const unsigned int STEP = 4;
+    const unsigned int STANDART_SIZE_DECK = 52;
+    const std::string  DATA[13] = { std::string("TWO"), std::string("THREE"),  std::string("FOUR"), std::string("FIVE"),
                                 std::string("SIX"), std::string("SEVEN"), std::string("EIGHT"),
                                 std::string("NINE"), std::string("TEN"), std::string("JACK"), std::string("QUEEN"),
                                 std::string("KING"), std::string("ACE")};
-    const std::string  suit[4] = { std::string("HEARTS"), std::string("DIAMONDS"), std::string("CLUBS"), std::string("SPADES")};
+    const std::string  SUIT[4] = { std::string("HEARTS"), std::string("DIAMONDS"), std::string("CLUBS"), std::string("SPADES")};
 };
 
 
