@@ -1,0 +1,1 @@
+/usr/bin/c++   -g   CMakeFiles/life.dir/Field.cpp.o  -o life 
